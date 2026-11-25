@@ -4,6 +4,7 @@
 <%@ page import="com.smartspend.HtmlUtil" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Set" %>
+<%@ page import="com.smartspend.CsrfUtil" %>
 <%
   SmartPlan plan = (SmartPlan) request.getAttribute("plan");
   List<SmartPlan> plans = (List<SmartPlan>) request.getAttribute("plans");
@@ -50,6 +51,7 @@
         <a href="<%= request.getContextPath() %>/reports">Reports</a>
       </nav>
       <form method="post" action="<%= request.getContextPath() %>/logout">
+        <input type="hidden" name="csrfToken" value="<%= HtmlUtil.escape(CsrfUtil.getToken(request)) %>">
         <button class="button button-secondary button-small button-full" type="submit">Log out</button>
       </form>
     </aside>
@@ -76,6 +78,7 @@
         <div class="budget-form-panel">
           <h2><%= plan == null ? "Plan an activity" : "Edit planned activity" %></h2>
           <form class="expense-form" method="post" action="<%= request.getContextPath() %>/planner/analyze">
+            <input type="hidden" name="csrfToken" value="<%= HtmlUtil.escape(CsrfUtil.getToken(request)) %>">
             <% if (planId != null) { %>
               <input type="hidden" name="planId" value="<%= planId %>">
             <% } %>
@@ -203,6 +206,7 @@
                   <a class="action-link" href="<%= request.getContextPath() %>/planner/edit?id=<%= savedPlan.getId() %>">Edit</a>
                   <form method="post" action="<%= request.getContextPath() %>/planner/delete"
                         onsubmit="return confirm('Delete this smart plan? This cannot be undone.')">
+                    <input type="hidden" name="csrfToken" value="<%= HtmlUtil.escape(CsrfUtil.getToken(request)) %>">
                     <input type="hidden" name="planId" value="<%= savedPlan.getId() %>">
                     <button class="action-link danger" type="submit">Delete</button>
                   </form>

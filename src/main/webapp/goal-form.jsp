@@ -2,6 +2,7 @@
 <%@ page import="com.smartspend.SavingsGoal" %>
 <%@ page import="com.smartspend.HtmlUtil" %>
 <%@ page import="java.util.Set" %>
+<%@ page import="com.smartspend.CsrfUtil" %>
 <%
   SavingsGoal goal = (SavingsGoal) request.getAttribute("goal");
   Set<String> categories = (Set<String>) request.getAttribute("categories");
@@ -48,6 +49,7 @@
         <a href="<%= request.getContextPath() %>/reports">Reports</a>
       </nav>
       <form method="post" action="<%= request.getContextPath() %>/logout">
+        <input type="hidden" name="csrfToken" value="<%= HtmlUtil.escape(CsrfUtil.getToken(request)) %>">
         <button class="button button-secondary button-small button-full" type="submit">Log out</button>
       </form>
     </aside>
@@ -64,6 +66,7 @@
           <div class="alert alert-error" role="alert"><%= HtmlUtil.escape(request.getAttribute("error")) %></div>
         <% } %>
         <form class="expense-form" method="post" action="<%= request.getContextPath() %>/goals/save">
+          <input type="hidden" name="csrfToken" value="<%= HtmlUtil.escape(CsrfUtil.getToken(request)) %>">
           <% if (goalId != null) { %>
             <input type="hidden" name="goalId" value="<%= goalId %>">
           <% } %>

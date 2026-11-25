@@ -3,6 +3,7 @@
 <%@ page import="com.smartspend.Expense" %>
 <%@ page import="com.smartspend.HtmlUtil" %>
 <%@ page import="java.util.Map" %>
+<%@ page import="com.smartspend.CsrfUtil" %>
 <%
   ReportRepository.ReportData report =
       (ReportRepository.ReportData) request.getAttribute("report");
@@ -33,6 +34,7 @@
         <a class="active" href="<%= request.getContextPath() %>/reports">Reports</a>
       </nav>
       <form method="post" action="<%= request.getContextPath() %>/logout">
+        <input type="hidden" name="csrfToken" value="<%= HtmlUtil.escape(CsrfUtil.getToken(request)) %>">
         <button class="button button-secondary button-small button-full" type="submit">Log out</button>
       </form>
     </aside>

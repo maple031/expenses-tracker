@@ -2,6 +2,7 @@
 <%@ page import="com.smartspend.Reminder" %>
 <%@ page import="com.smartspend.HtmlUtil" %>
 <%@ page import="java.util.Set" %>
+<%@ page import="com.smartspend.CsrfUtil" %>
 <%
   Reminder reminder = (Reminder) request.getAttribute("reminder");
   Set<String> categories = (Set<String>) request.getAttribute("categories");
@@ -50,6 +51,7 @@
         <a href="<%= request.getContextPath() %>/reports">Reports</a>
       </nav>
       <form method="post" action="<%= request.getContextPath() %>/logout">
+        <input type="hidden" name="csrfToken" value="<%= HtmlUtil.escape(CsrfUtil.getToken(request)) %>">
         <button class="button button-secondary button-small button-full" type="submit">Log out</button>
       </form>
     </aside>
@@ -66,6 +68,7 @@
           <div class="alert alert-error" role="alert"><%= HtmlUtil.escape(request.getAttribute("error")) %></div>
         <% } %>
         <form class="expense-form" method="post" action="<%= request.getContextPath() %>/reminders/save">
+          <input type="hidden" name="csrfToken" value="<%= HtmlUtil.escape(CsrfUtil.getToken(request)) %>">
           <% if (reminderId != null) { %>
             <input type="hidden" name="reminderId" value="<%= reminderId %>">
           <% } %>

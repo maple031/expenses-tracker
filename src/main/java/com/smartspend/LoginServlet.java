@@ -52,6 +52,7 @@ public class LoginServlet extends HttpServlet {
             HttpSession session = request.getSession(true);
             session.setAttribute("loggedInUser", result.get().user());
             session.setMaxInactiveInterval(30 * 60);
+            CsrfUtil.getToken(request);
             response.sendRedirect(request.getContextPath() + "/dashboard");
         } catch (SQLException e) {
             showError(request, response, "We could not connect to the database. Please try again.", email);

@@ -3,6 +3,7 @@
 <%@ page import="com.smartspend.HtmlUtil" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Set" %>
+<%@ page import="com.smartspend.CsrfUtil" %>
 <%
   List<SavingsGoal> goals = (List<SavingsGoal>) request.getAttribute("goals");
 %>
@@ -28,6 +29,7 @@
         <a href="<%= request.getContextPath() %>/reports">Reports</a>
       </nav>
       <form method="post" action="<%= request.getContextPath() %>/logout">
+        <input type="hidden" name="csrfToken" value="<%= HtmlUtil.escape(CsrfUtil.getToken(request)) %>">
         <button class="button button-secondary button-small button-full" type="submit">Log out</button>
       </form>
     </aside>
@@ -94,6 +96,7 @@
               </p>
               <form class="add-savings-form" method="post"
                     action="<%= request.getContextPath() %>/goals/add-savings">
+                <input type="hidden" name="csrfToken" value="<%= HtmlUtil.escape(CsrfUtil.getToken(request)) %>">
                 <input type="hidden" name="goalId" value="<%= goal.getId() %>">
                 <label for="addAmount-<%= goal.getId() %>">Add savings</label>
                 <div>
@@ -112,6 +115,7 @@
                 <a class="action-link" href="<%= request.getContextPath() %>/goals/edit?id=<%= goal.getId() %>">Edit</a>
                 <form method="post" action="<%= request.getContextPath() %>/goals/delete"
                       onsubmit="return confirm('Delete this savings goal? This cannot be undone.')">
+                  <input type="hidden" name="csrfToken" value="<%= HtmlUtil.escape(CsrfUtil.getToken(request)) %>">
                   <input type="hidden" name="goalId" value="<%= goal.getId() %>">
                   <button class="action-link danger" type="submit">Delete</button>
                 </form>

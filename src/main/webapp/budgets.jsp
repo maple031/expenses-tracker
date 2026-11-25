@@ -2,6 +2,7 @@
 <%@ page import="com.smartspend.Budget" %>
 <%@ page import="com.smartspend.BudgetRepository" %>
 <%@ page import="com.smartspend.HtmlUtil" %>
+<%@ page import="com.smartspend.CsrfUtil" %>
 <%
   Budget budget = (Budget) request.getAttribute("budget");
   BudgetRepository.BudgetSummary budgetSummary =
@@ -35,6 +36,7 @@
         <a href="<%= request.getContextPath() %>/reports">Reports</a>
       </nav>
       <form method="post" action="<%= request.getContextPath() %>/logout">
+        <input type="hidden" name="csrfToken" value="<%= HtmlUtil.escape(CsrfUtil.getToken(request)) %>">
         <button class="button button-secondary button-small button-full" type="submit">Log out</button>
       </form>
     </aside>
@@ -57,6 +59,7 @@
         <div class="budget-form-panel">
           <h2><%= budget == null ? "Set monthly budget" : "Update monthly budget" %></h2>
           <form class="expense-form" method="post" action="<%= request.getContextPath() %>/budgets/save">
+            <input type="hidden" name="csrfToken" value="<%= HtmlUtil.escape(CsrfUtil.getToken(request)) %>">
             <label for="month">Month</label>
             <input id="month" name="month" type="month" value="<%= HtmlUtil.escape(selectedMonth) %>" required>
 

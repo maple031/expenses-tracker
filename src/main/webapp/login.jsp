@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="com.smartspend.CsrfUtil" %>
 <%@ page import="com.smartspend.HtmlUtil" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -26,6 +27,7 @@
         <div class="alert alert-error" role="alert"><%= HtmlUtil.escape(request.getAttribute("error")) %></div>
       <% } %>
       <form method="post" action="<%= request.getContextPath() %>/login" autocomplete="on">
+        <input type="hidden" name="csrfToken" value="<%= HtmlUtil.escape(CsrfUtil.getToken(request)) %>">
         <label for="email">Email</label>
         <input id="email" name="email" type="email" maxlength="150" required
                value="<%= HtmlUtil.escape(request.getAttribute("email")) %>"

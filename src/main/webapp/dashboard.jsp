@@ -7,6 +7,7 @@
 <%@ page import="com.smartspend.SavingsGoal" %>
 <%@ page import="com.smartspend.ReminderRepository" %>
 <%@ page import="com.smartspend.SmartPlan" %>
+<%@ page import="com.smartspend.CsrfUtil" %>
 <%@ page import="java.util.Map" %>
 <%
   User user = (User) session.getAttribute("loggedInUser");
@@ -55,6 +56,7 @@
         <a href="<%= request.getContextPath() %>/reports">Reports</a>
       </nav>
       <form method="post" action="<%= request.getContextPath() %>/logout">
+        <input type="hidden" name="csrfToken" value="<%= HtmlUtil.escape(CsrfUtil.getToken(request)) %>">
         <button class="button button-secondary button-small button-full" type="submit">Log out</button>
       </form>
     </aside>
