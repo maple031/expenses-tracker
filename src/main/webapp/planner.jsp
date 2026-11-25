@@ -147,6 +147,10 @@
                 <strong>&#8377;<%= analysis.suggestedLimit().setScale(2).toPlainString() %></strong></div>
               <div><span>Suggested monthly savings</span>
                 <strong>&#8377;<%= analysis.suggestedMonthlySavings().setScale(2).toPlainString() %></strong></div>
+              <% if (analysis.shortfall().compareTo(java.math.BigDecimal.ZERO) > 0) { %>
+                <div><span>Actual shortfall</span>
+                  <strong>&#8377;<%= analysis.shortfall().setScale(2).toPlainString() %></strong></div>
+              <% } %>
             </div>
             <% if (analysis.alternatives() != null && !analysis.alternatives().isBlank()) { %>
               <div class="alternative-box">
@@ -201,6 +205,10 @@
                     <strong>&#8377;<%= savedPlan.getRemainingAfter().setScale(2).toPlainString() %></strong></div>
                   <div><span>Suggested limit</span>
                     <strong>&#8377;<%= savedPlan.getSuggestedLimit().setScale(2).toPlainString() %></strong></div>
+                  <% if (savedPlan.getShortfall().compareTo(java.math.BigDecimal.ZERO) > 0) { %>
+                    <div><span>Actual shortfall</span>
+                      <strong>&#8377;<%= savedPlan.getShortfall().setScale(2).toPlainString() %></strong></div>
+                  <% } %>
                 </div>
                 <div class="goal-actions">
                   <a class="action-link" href="<%= request.getContextPath() %>/planner/edit?id=<%= savedPlan.getId() %>">Edit</a>

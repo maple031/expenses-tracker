@@ -24,7 +24,6 @@ public final class SmartPlannerEngine {
 
         BigDecimal remaining = budget.remaining();
         BigDecimal remainingAfter = remaining.subtract(cost);
-        if (remainingAfter.compareTo(BigDecimal.ZERO) < 0) remainingAfter = BigDecimal.ZERO;
 
         BigDecimal totalAfterActivity = budget.spent().add(cost);
         boolean mayExceed = budget.limit().compareTo(BigDecimal.ZERO) > 0
@@ -74,9 +73,11 @@ public final class SmartPlannerEngine {
 
         String message;
         if (mayExceed) {
-            message = "This activity may exceed the current monthly budget.";
+            message = "This activity may exceed the current monthly budget."
+                    + " Actual shortfall: \u20b9" + deficit.setScale(2).toPlainString() + ".";
         } else if (!affordable) {
-            message = "This activity is not currently affordable from the remaining budget.";
+            message = "This activity is not currently affordable from the remaining budget."
+                    + " Actual shortfall: \u20b9" + deficit.setScale(2).toPlainString() + ".";
         } else if ("CAUTION".equals(status)) {
             message = "The activity is affordable, but it will use most of the remaining budget.";
         } else {

@@ -163,5 +163,12 @@ public final class SmartPlanRepository {
     public record SmartRecommendation(boolean affordable, BigDecimal remainingAfter,
                                       boolean mayExceedBudget, BigDecimal suggestedLimit,
                                       BigDecimal suggestedMonthlySavings, String status,
-                                      String message, String alternatives) {}
+                                      String message, String alternatives) {
+        public BigDecimal shortfall() {
+            if (remainingAfter.compareTo(BigDecimal.ZERO) >= 0) {
+                return BigDecimal.ZERO;
+            }
+            return remainingAfter.abs();
+        }
+    }
 }

@@ -51,6 +51,12 @@ public class SmartPlan {
     public String getDescription() { return description; }
     public boolean isAffordable() { return affordable; }
     public BigDecimal getRemainingAfter() { return remainingAfter; }
+    public BigDecimal getShortfall() {
+        if (remainingAfter.compareTo(BigDecimal.ZERO) >= 0) {
+            return BigDecimal.ZERO;
+        }
+        return remainingAfter.abs();
+    }
     public boolean isMayExceedBudget() { return mayExceedBudget; }
     public BigDecimal getSuggestedLimit() { return suggestedLimit; }
     public BigDecimal getSuggestedMonthlySavings() { return suggestedMonthlySavings; }
