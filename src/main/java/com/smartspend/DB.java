@@ -30,6 +30,7 @@ public final class DB {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
+            AppLogger.logUnexpectedError("Loading MySQL JDBC driver", e);
             throw new SQLException("Database driver is unavailable.", e);
         }
 

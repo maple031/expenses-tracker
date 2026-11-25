@@ -81,8 +81,9 @@ public class ReportServlet extends HttpServlet {
             request.setAttribute("selectedEnd", end.toString());
             request.getRequestDispatcher("/reports.jsp").forward(request, response);
         } catch (IllegalArgumentException e) {
-            forwardReportError(request, response, e.getMessage());
+            forwardReportError(request, response, "Select a valid report period.");
         } catch (SQLException e) {
+            AppLogger.logDatabaseError("Loading expense report", e);
             forwardReportError(request, response, "Could not load the report. Please try again.");
         }
     }
@@ -99,12 +100,19 @@ public class ReportServlet extends HttpServlet {
                             + range.start() + "-to-" + range.end() + ".pdf\"");
             ReportPdfGenerator.generate(report, response.getOutputStream());
         } catch (IllegalArgumentException e) {
+            AppLogger.logUnexpectedError("PDF report parameters", e);
             response.sendRedirect(request.getContextPath() + "/reports?error="
-                    + java.net.URLEncoder.encode(e.getMessage(),
+                    + java.net.URLEncoder.encode("Select valid report dates.",
                     java.nio.charset.StandardCharsets.UTF_8));
         } catch (SQLException e) {
+            AppLogger.logDatabaseError("Generating PDF report", e);
             response.sendRedirect(request.getContextPath() + "/reports?error="
                     + java.net.URLEncoder.encode("Could not generate the PDF report.",
+                    java.nio.charset.StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            AppLogger.logUnexpectedError("Writing PDF report", e);
+            response.sendRedirect(request.getContextPath() + "/reports?error="
+                    + java.net.URLEncoder.encode("Could not download the PDF report.",
                     java.nio.charset.StandardCharsets.UTF_8));
         }
     }
@@ -121,12 +129,19 @@ public class ReportServlet extends HttpServlet {
                             + range.start() + "-to-" + range.end() + ".xlsx\"");
             ReportExcelGenerator.generate(report, response.getOutputStream());
         } catch (IllegalArgumentException e) {
+            AppLogger.logUnexpectedError("Excel report parameters", e);
             response.sendRedirect(request.getContextPath() + "/reports?error="
-                    + java.net.URLEncoder.encode(e.getMessage(),
+                    + java.net.URLEncoder.encode("Select valid report dates.",
                     java.nio.charset.StandardCharsets.UTF_8));
         } catch (SQLException e) {
+            AppLogger.logDatabaseError("Generating Excel report", e);
             response.sendRedirect(request.getContextPath() + "/reports?error="
                     + java.net.URLEncoder.encode("Could not generate the Excel report.",
+                    java.nio.charset.StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            AppLogger.logUnexpectedError("Writing Excel report", e);
+            response.sendRedirect(request.getContextPath() + "/reports?error="
+                    + java.net.URLEncoder.encode("Could not download the Excel report.",
                     java.nio.charset.StandardCharsets.UTF_8));
         }
     }

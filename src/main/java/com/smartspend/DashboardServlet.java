@@ -53,6 +53,7 @@ public class DashboardServlet extends HttpServlet {
             request.getSession(false).setAttribute("seenReminderIds", seen);
             request.setAttribute("unseenReminderCount", unseen);
         } catch (SQLException e) {
+            AppLogger.logDatabaseError("Loading dashboard summaries", e);
             request.setAttribute("expenseSummary",
                     new ExpenseRepository.Summary(
                             java.math.BigDecimal.ZERO, 0, java.math.BigDecimal.ZERO,

@@ -89,6 +89,7 @@ public class ExpenseServlet extends HttpServlet {
             request.setAttribute("month", monthText);
             request.getRequestDispatcher("/expenses.jsp").forward(request, response);
         } catch (SQLException e) {
+            AppLogger.logDatabaseError("Loading expense list", e);
             forwardDatabaseError(request, response, "Could not load expenses. Please try again.");
         }
     }
@@ -110,6 +111,7 @@ public class ExpenseServlet extends HttpServlet {
             request.setAttribute("categories", CATEGORIES);
             request.getRequestDispatcher("/expense-form.jsp").forward(request, response);
         } catch (SQLException e) {
+            AppLogger.logDatabaseError("Loading expense for editing", e);
             forwardDatabaseError(request, response, "Could not load that expense.");
         }
     }
@@ -161,6 +163,7 @@ public class ExpenseServlet extends HttpServlet {
             }
             response.sendRedirect(request.getContextPath() + "/expenses?success=1");
         } catch (SQLException e) {
+            AppLogger.logDatabaseError("Saving expense", e);
             forwardFormError(request, response, expenseId,
                     "Could not save the expense. Please try again.");
         }
@@ -177,6 +180,7 @@ public class ExpenseServlet extends HttpServlet {
             expenses.delete(expenseId, user.getId());
             response.sendRedirect(request.getContextPath() + "/expenses?deleted=1");
         } catch (SQLException e) {
+            AppLogger.logDatabaseError("Deleting expense", e);
             forwardDatabaseError(request, response, "Could not delete the expense. Please try again.");
         }
     }
@@ -192,8 +196,8 @@ public class ExpenseServlet extends HttpServlet {
                 if (existing.isPresent()) {
                     request.setAttribute("expense", existing.get());
                 }
-            } catch (SQLException ignored) {
-                // The submitted values below remain available for correction.
+            } catch (SQLException e) {
+                AppLogger.logDatabaseError("Reloading expense after form error", e);
             }
         }
         request.setAttribute("submittedDescription", trim(request.getParameter("description")));

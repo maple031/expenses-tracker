@@ -16,6 +16,7 @@ public class DBTestServlet extends HttpServlet {
         try (Connection connection = DB.getConnection()) {
             response.getWriter().println("SUCCESS: SmartSpend connected to MySQL.");
         } catch (SQLException e) {
+            AppLogger.logDatabaseError("Database diagnostic connection", e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().println("Database connection failed. Check MySQL and your settings.");
         }

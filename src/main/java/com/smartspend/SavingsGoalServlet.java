@@ -57,6 +57,7 @@ public class SavingsGoalServlet extends HttpServlet {
             request.setAttribute("categories", CATEGORIES);
             request.getRequestDispatcher("/goals.jsp").forward(request, response);
         } catch (SQLException e) {
+            AppLogger.logDatabaseError("Loading savings goals", e);
             request.setAttribute("error", "Could not load savings goals. Please try again.");
             request.setAttribute("goals", List.of());
             request.setAttribute("categories", CATEGORIES);
@@ -154,6 +155,7 @@ public class SavingsGoalServlet extends HttpServlet {
             }
             response.sendRedirect(request.getContextPath() + "/goals?success=1");
         } catch (SQLException e) {
+            AppLogger.logDatabaseError("Saving savings goal", e);
             forwardGoalError(request, response, "Could not save the goal. Please try again.", goalId);
         }
     }
@@ -184,6 +186,7 @@ public class SavingsGoalServlet extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/goals?added=1");
             }
         } catch (SQLException e) {
+            AppLogger.logDatabaseError("Adding savings to goal", e);
             response.sendRedirect(request.getContextPath() + "/goals?addError="
                     + java.net.URLEncoder.encode("Could not add savings. Please try again.",
                     java.nio.charset.StandardCharsets.UTF_8));
@@ -196,7 +199,8 @@ public class SavingsGoalServlet extends HttpServlet {
         if (goalId != null) {
             try {
                 new SavingsGoalRepository().delete(goalId, user.getId());
-            } catch (SQLException ignored) {
+            } catch (SQLException e) {
+                AppLogger.logDatabaseError("Deleting savings goal", e);
                 response.sendRedirect(request.getContextPath() + "/goals?deleteError=1");
                 return;
             }
@@ -224,8 +228,8 @@ public class SavingsGoalServlet extends HttpServlet {
                 if (existing.isPresent()) {
                     request.setAttribute("goal", existing.get());
                 }
-            } catch (SQLException ignored) {
-                // Submitted form values remain available for correction.
+            } catch (SQLException e) {
+                AppLogger.logDatabaseError("Reloading savings goal after form error", e);
             }
         }
         request.getRequestDispatcher("/goal-form.jsp").forward(request, response);

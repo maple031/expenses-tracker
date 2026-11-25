@@ -37,6 +37,7 @@ public class BudgetServlet extends HttpServlet {
             request.setAttribute("selectedMonth", month.toString());
             request.getRequestDispatcher("/budgets.jsp").forward(request, response);
         } catch (SQLException e) {
+            AppLogger.logDatabaseError("Loading budget", e);
             request.setAttribute("error", "Could not load the budget. Please try again.");
             request.setAttribute("selectedMonth", month.toString());
             request.setAttribute("budgetSummary",
@@ -88,6 +89,7 @@ public class BudgetServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath()
                     + "/budgets?month=" + month + "&success=1");
         } catch (SQLException e) {
+            AppLogger.logDatabaseError("Saving budget", e);
             forwardError(request, response, monthText,
                     "Could not save the budget. Please try again.");
         }

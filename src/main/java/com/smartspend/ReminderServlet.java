@@ -59,6 +59,7 @@ public class ReminderServlet extends HttpServlet {
 
             showList(request, response, user, repository);
         } catch (SQLException e) {
+            AppLogger.logDatabaseError("Loading reminders", e);
             request.setAttribute("error", "Could not load reminders. Please try again.");
             request.setAttribute("reminders", List.of());
             request.setAttribute("categories", CATEGORIES);
@@ -115,6 +116,7 @@ public class ReminderServlet extends HttpServlet {
             request.setAttribute("selectedStatus", status);
             request.getRequestDispatcher("/reminders.jsp").forward(request, response);
         } catch (SQLException e) {
+            AppLogger.logDatabaseError("Loading filtered reminder list", e);
             request.setAttribute("error", "Could not load reminders. Please try again.");
             request.setAttribute("reminders", List.of());
             request.setAttribute("categories", CATEGORIES);
@@ -183,6 +185,7 @@ public class ReminderServlet extends HttpServlet {
             }
             response.sendRedirect(request.getContextPath() + "/reminders?success=1");
         } catch (SQLException e) {
+            AppLogger.logDatabaseError("Saving reminder", e);
             forwardReminderError(request, response,
                     "Could not save the reminder. Please try again.", reminderId);
         }
@@ -195,6 +198,7 @@ public class ReminderServlet extends HttpServlet {
             try {
                 new ReminderRepository().markCompleted(reminderId, user.getId());
             } catch (SQLException e) {
+                AppLogger.logDatabaseError("Completing reminder", e);
                 response.sendRedirect(request.getContextPath() + "/reminders?completeError=1");
                 return;
             }
@@ -209,6 +213,7 @@ public class ReminderServlet extends HttpServlet {
             try {
                 new ReminderRepository().delete(reminderId, user.getId());
             } catch (SQLException e) {
+                AppLogger.logDatabaseError("Deleting reminder", e);
                 response.sendRedirect(request.getContextPath() + "/reminders?deleteError=1");
                 return;
             }
@@ -233,7 +238,9 @@ public class ReminderServlet extends HttpServlet {
                 var existing = new ReminderRepository().findOwnedBy(reminderId,
                         loggedInUser(request).getId());
                 if (existing.isPresent()) request.setAttribute("reminder", existing.get());
-            } catch (SQLException ignored) {}
+            } catch (SQLException e) {
+                AppLogger.logDatabaseError("Reloading reminder after form error", e);
+            }
         }
         request.getRequestDispatcher("/reminder-form.jsp").forward(request, response);
     }

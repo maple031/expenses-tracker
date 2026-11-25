@@ -55,6 +55,7 @@ public class LoginServlet extends HttpServlet {
             CsrfUtil.getToken(request);
             response.sendRedirect(request.getContextPath() + "/dashboard");
         } catch (SQLException e) {
+            AppLogger.logDatabaseError("Login credential lookup", e);
             showError(request, response, "We could not connect to the database. Please try again.", email);
         } catch (IllegalArgumentException e) {
             showError(request, response, "The email or password is incorrect.", email);

@@ -52,6 +52,7 @@ public class SmartPlannerServlet extends HttpServlet {
             request.setAttribute("activityTypes", ACTIVITY_TYPES);
             request.getRequestDispatcher("/planner.jsp").forward(request, response);
         } catch (SQLException e) {
+            AppLogger.logDatabaseError("Loading smart plans", e);
             request.setAttribute("error", "Could not load Smart Planner. Please try again.");
             request.setAttribute("plans", List.of());
             request.setAttribute("activityTypes", ACTIVITY_TYPES);
@@ -149,6 +150,7 @@ public class SmartPlannerServlet extends HttpServlet {
             }
             response.sendRedirect(request.getContextPath() + "/planner?saved=1");
         } catch (SQLException e) {
+            AppLogger.logDatabaseError("Saving or analyzing smart plan", e);
             forwardError(request, response, "Could not save or analyze the plan. Please try again.", planId);
         }
     }
@@ -160,6 +162,7 @@ public class SmartPlannerServlet extends HttpServlet {
             try {
                 new SmartPlanRepository().delete(planId, user.getId());
             } catch (SQLException e) {
+                AppLogger.logDatabaseError("Deleting smart plan", e);
                 response.sendRedirect(request.getContextPath() + "/planner?deleteError=1");
                 return;
             }
@@ -182,12 +185,17 @@ public class SmartPlannerServlet extends HttpServlet {
             try {
                 var plan = new SmartPlanRepository().findOwnedBy(planId, loggedInUser(request).getId());
                 if (plan.isPresent()) request.setAttribute("plan", plan.get());
-            } catch (SQLException ignored) {}
-        } else {
+            } catch (SQLException e) {
+                AppLogger.logDatabaseError("Reloading smart plan after form error", e);
+            }
+        }
+        else {
             try {
                 request.setAttribute("plans",
                         new SmartPlanRepository().findForUser(loggedInUser(request).getId()));
-            } catch (SQLException ignored) {}
+            } catch (SQLException e) {
+                AppLogger.logDatabaseError("Loading plans for planner form", e);
+            }
         }
         request.getRequestDispatcher("/planner.jsp").forward(request, response);
     }

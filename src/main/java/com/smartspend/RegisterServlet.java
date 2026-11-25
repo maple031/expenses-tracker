@@ -65,8 +65,10 @@ public class RegisterServlet extends HttpServlet {
                 showError(request, response, "Registration could not be completed. Please try again.", fullName, email);
             }
         } catch (SQLIntegrityConstraintViolationException e) {
+            AppLogger.logDatabaseError("Registration duplicate constraint", e);
             showError(request, response, "An account with this email already exists.", fullName, email);
         } catch (SQLException e) {
+            AppLogger.logDatabaseError("User registration", e);
             showError(request, response, "We could not connect to the database. Please try again.", fullName, email);
         }
     }
