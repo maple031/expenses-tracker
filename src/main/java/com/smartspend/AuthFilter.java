@@ -15,7 +15,8 @@ import java.io.IOException;
 @WebFilter(urlPatterns = {
         "/dashboard", "/expenses", "/expenses/*", "/budgets", "/budgets/*",
         "/goals", "/goals/*", "/reminders", "/reminders/*",
-        "/planner", "/planner/*", "/reports", "/reports/*"
+        "/planner", "/planner/*", "/reports", "/reports/*",
+        "/db-test"
 })
 public class AuthFilter implements Filter {
     @Override

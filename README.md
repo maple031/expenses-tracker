@@ -18,12 +18,18 @@ Use forward slashes in the path.
 ## 3. Configure database credentials
 In a PowerShell terminal, set these values. Replace the password with your own MySQL password. Do not share it in chat.
 ```powershell
-$env:SMARTSPEND_DB_URL = "jdbc:mysql://localhost:3306/smartspend?useSSL=false&serverTimezone=Asia/Kolkata"
-$env:SMARTSPEND_DB_USER = "root"
+$env:SMARTSPEND_DB_URL = "jdbc:mysql://localhost:3306/smartspend?serverTimezone=Asia/Kolkata"
+$env:SMARTSPEND_DB_USER = "YOUR_MYSQL_USERNAME"
 $env:SMARTSPEND_DB_PASSWORD = "YOUR_MYSQL_PASSWORD"
 ```
-If your MySQL root account has no password, set the last value to an empty string.
+All three environment variables are required. An empty database password is not accepted.
 Start Tomcat from this same PowerShell session so it inherits these settings.
+
+For a verified TLS deployment, configure the MySQL JDBC URL explicitly with Connector/J's TLS settings and a trusted certificate configuration, for example:
+```text
+jdbc:mysql://HOST:3306/smartspend?sslMode=VERIFY_IDENTITY&enabledTLSProtocols=TLSv1.3,TLSv1.2&serverTimezone=Asia/Kolkata
+```
+Use only a URL whose certificate trust and server identity have been verified for your MySQL deployment. SmartSpend does not claim that TLS is active unless the deployed JDBC URL explicitly enables and verifies it.
 
 ## 4. Build
 From the folder containing `pom.xml`:
@@ -37,7 +43,7 @@ The first build downloads dependencies and needs internet access. It creates `ta
 2. Copy `target/SmartSpend.war` into Tomcat's `webapps` folder.
 3. In the PowerShell session with the database variables set, start Tomcat using its `bin\\catalina.bat run` command.
 4. Open http://localhost:8080/SmartSpend/
-5. Test the database at http://localhost:8080/SmartSpend/db-test
+5. Sign in, then test the authenticated database status endpoint at http://localhost:8080/SmartSpend/db-test
 
 ## Notes
 - Tomcat 10.1 uses Jakarta Servlet 6.0 (`jakarta.*` imports).

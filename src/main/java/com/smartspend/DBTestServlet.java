@@ -18,7 +18,6 @@ public class DBTestServlet extends HttpServlet {
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().println("Database connection failed. Check MySQL and your settings.");
-            response.getWriter().println("Details: " + e.getMessage());
         }
     }
 }
