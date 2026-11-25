@@ -96,7 +96,7 @@
         <section class="summary-grid report-summary">
           <article class="summary-card">
             <span>Total expenses</span>
-            <strong>&#8377;<%= report.total().setScale(2).toPlainString() %></strong>
+            <strong>&#8377;<%= HtmlUtil.formatMoney(report.total()) %></strong>
           </article>
           <article class="summary-card">
             <span>Transactions</span>
@@ -104,7 +104,7 @@
           </article>
           <article class="summary-card">
             <span>Highest expense</span>
-            <strong>&#8377;<%= report.highestExpense().setScale(2).toPlainString() %></strong>
+            <strong>&#8377;<%= HtmlUtil.formatMoney(report.highestExpense()) %></strong>
           </article>
         </section>
 
@@ -120,7 +120,7 @@
                 <% for (Map.Entry<String, java.math.BigDecimal> entry : report.categoryTotals().entrySet()) { %>
                   <div class="category-row">
                     <span><%= HtmlUtil.escape(entry.getKey()) %></span>
-                    <strong>&#8377;<%= entry.getValue().setScale(2).toPlainString() %>
+                    <strong>&#8377;<%= HtmlUtil.formatMoney(entry.getValue()) %>
                       (<%= report.categoryPercentages().get(entry.getKey()).setScale(2).toPlainString() %>%)
                     </strong>
                   </div>
@@ -148,7 +148,7 @@
                         <td><%= expense.getExpenseDate() %></td>
                         <td><span class="category-badge"><%= HtmlUtil.escape(expense.getCategory()) %></span></td>
                         <td><%= HtmlUtil.escape(expense.getDescription()) %></td>
-                        <td class="amount-column">&#8377;<%= expense.getAmount().setScale(2).toPlainString() %></td>
+                        <td class="amount-column">&#8377;<%= HtmlUtil.formatMoney(expense.getAmount()) %></td>
                       </tr>
                     <% } %>
                   <% } %>
@@ -169,7 +169,8 @@
                 <%= entry.getValue().toPlainString() %>,
               <% } %>
             ];
-            new Chart(document.getElementById("categoryChart"), {
+            if (typeof Chart !== "undefined") {
+              new Chart(document.getElementById("categoryChart"), {
               type: "doughnut",
               data: {
                 labels: reportCategories,
@@ -182,7 +183,8 @@
                 responsive: true,
                 plugins: { legend: { position: "bottom" } }
               }
-            });
+              });
+            }
           </script>
         <% } %>
       <% } %>

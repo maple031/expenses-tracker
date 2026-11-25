@@ -90,9 +90,9 @@
             <p class="empty-state">Set a budget to see spending progress.</p>
           <% } else { %>
             <div class="budget-overview-grid">
-              <div><span>Total budget</span><strong>&#8377;<%= budgetSummary.limit().setScale(2).toPlainString() %></strong></div>
-              <div><span>Amount spent</span><strong>&#8377;<%= budgetSummary.spent().setScale(2).toPlainString() %></strong></div>
-              <div><span>Remaining</span><strong>&#8377;<%= budgetSummary.remaining().setScale(2).toPlainString() %></strong></div>
+              <div><span>Total budget</span><strong>&#8377;<%= HtmlUtil.formatMoney(budgetSummary.limit()) %></strong></div>
+              <div><span>Amount spent</span><strong>&#8377;<%= HtmlUtil.formatMoney(budgetSummary.spent()) %></strong></div>
+              <div><span>Remaining</span><strong>&#8377;<%= HtmlUtil.formatMoney(budgetSummary.remaining()) %></strong></div>
             </div>
             <div class="progress-heading">
               <strong class="<%= budgetSummary.statusClass() %>"><%= budgetSummary.status() %></strong>

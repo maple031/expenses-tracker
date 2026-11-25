@@ -35,6 +35,10 @@ public class DashboardServlet extends HttpServlet {
             request.setAttribute("reminderSummary", reminderSummary);
             request.setAttribute("savedPlans",
                     new SmartPlanRepository().findForUser(user.getId()));
+            request.setAttribute("recentExpenses",
+                    repository.findForUser(
+                            user.getId(), null, null, null, null, null)
+                            .stream().limit(5).toList());
 
             @SuppressWarnings("unchecked")
             Set<Long> seen = (Set<Long>) request.getSession(false).getAttribute("seenReminderIds");
@@ -70,6 +74,7 @@ public class DashboardServlet extends HttpServlet {
                     new ReminderRepository.ReminderSummary(0, 0, 0, 0, null));
             request.setAttribute("unseenReminderCount", 0);
             request.setAttribute("savedPlans", java.util.List.of());
+            request.setAttribute("recentExpenses", java.util.List.of());
             request.setAttribute("summaryError", "Expense summary is temporarily unavailable.");
         }
         request.getRequestDispatcher("/dashboard.jsp").forward(request, response);

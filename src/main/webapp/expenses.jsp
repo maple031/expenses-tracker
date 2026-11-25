@@ -105,7 +105,7 @@
                     <td><%= expense.getExpenseDate() %></td>
                     <td><span class="category-badge"><%= HtmlUtil.escape(expense.getCategory()) %></span></td>
                     <td><%= HtmlUtil.escape(expense.getDescription()) %></td>
-                    <td class="amount-column">&#8377;<%= expense.getAmount().setScale(2).toPlainString() %></td>
+                    <td class="amount-column">&#8377;<%= HtmlUtil.formatMoney(expense.getAmount()) %></td>
                     <td class="actions">
                       <a class="action-link" href="<%= request.getContextPath() %>/expenses/edit?id=<%= expense.getId() %>">Edit</a>
                       <form method="post" action="<%= request.getContextPath() %>/expenses/delete"

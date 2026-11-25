@@ -8,6 +8,7 @@
 <%@ page import="com.smartspend.ReminderRepository" %>
 <%@ page import="com.smartspend.SmartPlan" %>
 <%@ page import="com.smartspend.CsrfUtil" %>
+<%@ page import="com.smartspend.Expense" %>
 <%@ page import="java.util.Map" %>
 <%
   User user = (User) session.getAttribute("loggedInUser");
@@ -28,6 +29,8 @@
   if (unseenReminderCount == null) unseenReminderCount = 0;
   java.util.List<SmartPlan> savedPlans =
       (java.util.List<SmartPlan>) request.getAttribute("savedPlans");
+  java.util.List<Expense> recentExpenses =
+      (java.util.List<Expense>) request.getAttribute("recentExpenses");
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -36,6 +39,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Dashboard | SmartSpend</title>
   <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <div class="app-shell">
@@ -74,7 +78,7 @@
       <section class="summary-grid" aria-label="Monthly expense summary">
         <article class="summary-card">
           <span>This month's spending</span>
-          <strong>&#8377;<%= expenseSummary == null ? "0.00" : expenseSummary.total().setScale(2).toPlainString() %></strong>
+          <strong>&#8377;<%= HtmlUtil.formatMoney(expenseSummary == null ? null : expenseSummary.total()) %></strong>
         </article>
         <article class="summary-card">
           <span>Transactions</span>
@@ -82,7 +86,7 @@
         </article>
         <article class="summary-card">
           <span>Highest expense</span>
-          <strong>&#8377;<%= expenseSummary == null ? "0.00" : expenseSummary.highest().setScale(2).toPlainString() %></strong>
+          <strong>&#8377;<%= HtmlUtil.formatMoney(expenseSummary == null ? null : expenseSummary.highest()) %></strong>
         </article>
       </section>
       <section class="budget-panel">
@@ -133,9 +137,9 @@
           <a class="button" href="<%= request.getContextPath() %>/budgets">Set monthly budget</a>
         <% } else { %>
           <div class="budget-overview-grid">
-            <div><span>Monthly budget</span><strong>&#8377;<%= budgetSummary.limit().setScale(2).toPlainString() %></strong></div>
-            <div><span>Amount spent</span><strong>&#8377;<%= budgetSummary.spent().setScale(2).toPlainString() %></strong></div>
-            <div><span>Remaining</span><strong>&#8377;<%= budgetSummary.remaining().setScale(2).toPlainString() %></strong></div>
+            <div><span>Monthly budget</span><strong>&#8377;<%= HtmlUtil.formatMoney(budgetSummary.limit()) %></strong></div>
+            <div><span>Amount spent</span><strong>&#8377;<%= HtmlUtil.formatMoney(budgetSummary.spent()) %></strong></div>
+            <div><span>Remaining</span><strong>&#8377;<%= HtmlUtil.formatMoney(budgetSummary.remaining()) %></strong></div>
           </div>
           <div class="progress-heading">
             <strong class="<%= budgetSummary.statusClass() %>"><%= budgetSummary.status() %></strong>
@@ -163,8 +167,8 @@
         <% } else { %>
           <div class="budget-overview-grid">
             <div><span>Active goals</span><strong><%= savingsSummary.activeCount() %></strong></div>
-            <div><span>Saved on active goals</span><strong>&#8377;<%= savingsSummary.savedAmount().setScale(2).toPlainString() %></strong></div>
-            <div><span>Active goals target</span><strong>&#8377;<%= savingsSummary.targetAmount().setScale(2).toPlainString() %></strong></div>
+            <div><span>Saved on active goals</span><strong>&#8377;<%= HtmlUtil.formatMoney(savingsSummary.savedAmount()) %></strong></div>
+            <div><span>Active goals target</span><strong>&#8377;<%= HtmlUtil.formatMoney(savingsSummary.targetAmount()) %></strong></div>
           </div>
           <div class="progress-heading">
             <strong class="normal">ACTIVE GOALS PROGRESS</strong>
@@ -179,7 +183,7 @@
               <% for (SavingsGoal goal : savingsSummary.recentGoals()) { %>
                 <div class="category-row">
                   <span><%= HtmlUtil.escape(goal.getName()) %></span>
-                  <strong>&#8377;<%= goal.getSavedAmount().setScale(2).toPlainString() %> / &#8377;<%= goal.getTargetAmount().setScale(2).toPlainString() %></strong>
+                  <strong>&#8377;<%= HtmlUtil.formatMoney(goal.getSavedAmount()) %> / &#8377;<%= HtmlUtil.formatMoney(goal.getTargetAmount()) %></strong>
                 </div>
               <% } %>
             </div>
@@ -203,7 +207,7 @@
               <div class="category-row">
                 <span><%= HtmlUtil.escape(plan.getActivityName()) %>
                   - <%= HtmlUtil.escape(plan.getRecommendationStatus()) %></span>
-                <strong>&#8377;<%= plan.getEstimatedCost().setScale(2).toPlainString() %></strong>
+                <strong>&#8377;<%= HtmlUtil.formatMoney(plan.getEstimatedCost()) %></strong>
               </div>
             <% } %>
           </div>
@@ -223,13 +227,74 @@
             <% for (Map.Entry<String, java.math.BigDecimal> entry : expenseSummary.categoryTotals().entrySet()) { %>
               <div class="category-row">
                 <span><%= HtmlUtil.escape(entry.getKey()) %></span>
-                <strong>&#8377;<%= entry.getValue().setScale(2).toPlainString() %></strong>
+                <strong>&#8377;<%= HtmlUtil.formatMoney(entry.getValue()) %></strong>
               </div>
             <% } %>
+          </div>
+          <div class="dashboard-chart">
+            <canvas id="dashboardCategoryChart" height="220"
+                    aria-label="Monthly category spending chart" role="img"></canvas>
+          </div>
+        <% } %>
+      </section>
+      <section class="table-panel dashboard-recent">
+        <div class="section-heading">
+          <div>
+            <p class="tag">LATEST ACTIVITY</p>
+            <h2>Recent expenses</h2>
+          </div>
+          <a class="text-link" href="<%= request.getContextPath() %>/expenses">View all</a>
+        </div>
+        <% if (recentExpenses == null || recentExpenses.isEmpty()) { %>
+          <p class="empty-state">No recent expenses.</p>
+        <% } else { %>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Date</th><th>Category</th><th>Description</th><th class="amount-column">Amount</th></tr></thead>
+              <tbody>
+                <% for (Expense expense : recentExpenses) { %>
+                  <tr>
+                    <td><%= expense.getExpenseDate() %></td>
+                    <td><span class="category-badge"><%= HtmlUtil.escape(expense.getCategory()) %></span></td>
+                    <td><%= HtmlUtil.escape(expense.getDescription()) %></td>
+                    <td class="amount-column">&#8377;<%= HtmlUtil.formatMoney(expense.getAmount()) %></td>
+                  </tr>
+                <% } %>
+              </tbody>
+            </table>
           </div>
         <% } %>
       </section>
     </main>
   </div>
+  <% if (expenseSummary != null && !expenseSummary.categoryTotals().isEmpty()) { %>
+    <script>
+      if (typeof Chart !== "undefined") {
+        new Chart(document.getElementById("dashboardCategoryChart"), {
+        type: "doughnut",
+        data: {
+          labels: [
+            <% for (Map.Entry<String, java.math.BigDecimal> entry : expenseSummary.categoryTotals().entrySet()) { %>
+              "<%= HtmlUtil.escape(entry.getKey()).replace("\"", "\\\"") %>",
+            <% } %>
+          ],
+          datasets: [{
+            data: [
+              <% for (Map.Entry<String, java.math.BigDecimal> entry : expenseSummary.categoryTotals().entrySet()) { %>
+                <%= entry.getValue().toPlainString() %>,
+              <% } %>
+            ],
+            backgroundColor: ["#6657d9", "#42a86b", "#e3a008", "#dc6b6b", "#4e91cc", "#a66ccf", "#50aaa8", "#8790a5"]
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: "bottom" } }
+        }
+        });
+      }
+    </script>
+  <% } %>
 </body>
 </html>

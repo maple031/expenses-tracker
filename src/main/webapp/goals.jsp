@@ -71,19 +71,21 @@
             <article class="goal-card">
               <div class="goal-card-heading">
                 <span class="category-badge"><%= HtmlUtil.escape(goal.getCategory()) %></span>
-                <span class="goal-status <%= goal.getStatus().toLowerCase() %>"><%= goal.getStatus() %></span>
+                <span class="goal-status <%= goal.getStatus().toLowerCase() %>">
+                  <%= "COMPLETED".equals(goal.getStatus()) ? "Completed" : goal.getStatus() %>
+                </span>
               </div>
               <h2><%= HtmlUtil.escape(goal.getName()) %></h2>
               <% if (goal.getDescription() != null && !goal.getDescription().isBlank()) { %>
                 <p class="goal-description"><%= HtmlUtil.escape(goal.getDescription()) %></p>
               <% } %>
               <div class="goal-amounts">
-                <strong>&#8377;<%= goal.getSavedAmount().setScale(2).toPlainString() %></strong>
-                <span>of &#8377;<%= goal.getTargetAmount().setScale(2).toPlainString() %></span>
+                <strong>&#8377;<%= HtmlUtil.formatMoney(goal.getSavedAmount()) %></strong>
+                <span>of &#8377;<%= HtmlUtil.formatMoney(goal.getTargetAmount()) %></span>
               </div>
               <div class="progress-heading">
                 <strong><%= goal.getProgressPercentage().setScale(2).toPlainString() %>%</strong>
-                <span>&#8377;<%= goal.getRemainingAmount().setScale(2).toPlainString() %> remaining</span>
+                <span>&#8377;<%= HtmlUtil.formatMoney(goal.getRemainingAmount()) %> remaining</span>
               </div>
               <div class="progress-track" role="progressbar"
                    aria-valuemin="0" aria-valuemax="100"

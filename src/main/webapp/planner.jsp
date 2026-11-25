@@ -142,14 +142,14 @@
             </div>
             <div class="budget-overview-grid">
               <div><span>Remaining after activity</span>
-                <strong>&#8377;<%= analysis.remainingAfter().setScale(2).toPlainString() %></strong></div>
+                <strong>&#8377;<%= HtmlUtil.formatMoney(analysis.remainingAfter()) %></strong></div>
               <div><span>Suggested spending limit</span>
-                <strong>&#8377;<%= analysis.suggestedLimit().setScale(2).toPlainString() %></strong></div>
+                <strong>&#8377;<%= HtmlUtil.formatMoney(analysis.suggestedLimit()) %></strong></div>
               <div><span>Suggested monthly savings</span>
-                <strong>&#8377;<%= analysis.suggestedMonthlySavings().setScale(2).toPlainString() %></strong></div>
+                <strong>&#8377;<%= HtmlUtil.formatMoney(analysis.suggestedMonthlySavings()) %></strong></div>
               <% if (analysis.shortfall().compareTo(java.math.BigDecimal.ZERO) > 0) { %>
                 <div><span>Actual shortfall</span>
-                  <strong>&#8377;<%= analysis.shortfall().setScale(2).toPlainString() %></strong></div>
+                  <strong>&#8377;<%= HtmlUtil.formatMoney(analysis.shortfall()) %></strong></div>
               <% } %>
             </div>
             <% if (analysis.alternatives() != null && !analysis.alternatives().isBlank()) { %>
@@ -161,7 +161,7 @@
             <% if (!analysis.affordable() && "Travel".equals(type)) { %>
               <p class="planner-tip">
                 Consider postponing the trip and saving
-                &#8377;<%= analysis.suggestedMonthlySavings().setScale(2).toPlainString() %>
+                &#8377;<%= HtmlUtil.formatMoney(analysis.suggestedMonthlySavings()) %>
                 each month until the planned date.
               </p>
             <% } %>
@@ -191,7 +191,7 @@
                 <h2><%= HtmlUtil.escape(savedPlan.getActivityName()) %></h2>
                 <p class="goal-date">Planned date: <strong><%= savedPlan.getPlannedDate() %></strong></p>
                 <div class="goal-amounts">
-                  <strong>&#8377;<%= savedPlan.getEstimatedCost().setScale(2).toPlainString() %></strong>
+                  <strong>&#8377;<%= HtmlUtil.formatMoney(savedPlan.getEstimatedCost()) %></strong>
                   <span>estimated cost</span>
                 </div>
                 <div class="recommendation-card small <%= savedPlan.getRecommendationStatus().toLowerCase() %>">
@@ -202,12 +202,12 @@
                 <% } %>
                 <div class="budget-overview-grid planner-mini">
                   <div><span>Remaining after</span>
-                    <strong>&#8377;<%= savedPlan.getRemainingAfter().setScale(2).toPlainString() %></strong></div>
+                    <strong>&#8377;<%= HtmlUtil.formatMoney(savedPlan.getRemainingAfter()) %></strong></div>
                   <div><span>Suggested limit</span>
-                    <strong>&#8377;<%= savedPlan.getSuggestedLimit().setScale(2).toPlainString() %></strong></div>
+                    <strong>&#8377;<%= HtmlUtil.formatMoney(savedPlan.getSuggestedLimit()) %></strong></div>
                   <% if (savedPlan.getShortfall().compareTo(java.math.BigDecimal.ZERO) > 0) { %>
                     <div><span>Actual shortfall</span>
-                      <strong>&#8377;<%= savedPlan.getShortfall().setScale(2).toPlainString() %></strong></div>
+                      <strong>&#8377;<%= HtmlUtil.formatMoney(savedPlan.getShortfall()) %></strong></div>
                   <% } %>
                 </div>
                 <div class="goal-actions">

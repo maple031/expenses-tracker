@@ -157,7 +157,7 @@
                           <span><strong>Time:</strong> <%= reminder.getReminderTime() %></span>
                         <% } %>
                         <% if (reminder.getExpectedAmount() != null) { %>
-                          <span><strong>Amount:</strong> &#8377;<%= reminder.getExpectedAmount().setScale(2).toPlainString() %></span>
+                          <span><strong>Amount:</strong> &#8377;<%= HtmlUtil.formatMoney(reminder.getExpectedAmount()) %></span>
                         <% } %>
                       </div>
                       <div class="goal-actions">

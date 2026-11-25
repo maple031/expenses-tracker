@@ -226,3 +226,15 @@ th { color: var(--muted); font-size: 13px; }
   .planner-layout { grid-template-columns: 1fr; }
   .planner-mini { grid-template-columns: 1fr; }
 }
+
+.dashboard-chart { height: 260px; max-width: 520px; margin: 24px auto 4px; }
+.dashboard-recent { margin-top: 18px; }
+.dashboard-recent .table-wrap { margin-top: 12px; }
+.goal-status.completed { letter-spacing: .2px; }
+@media (max-width: 800px) {
+  .sidebar-nav { flex-wrap: wrap; justify-content: flex-start; width: 100%; margin-left: 0; }
+  .sidebar-nav a { flex: 1 1 145px; text-align: center; }
+  .sidebar form { width: 100%; }
+  .page-header .button, .section-heading .text-link { min-width: 140px; text-align: center; }
+  .dashboard-chart { height: 220px; }
+}
