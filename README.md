@@ -135,3 +135,10 @@ The first build downloads dependencies and needs internet access. It creates `ta
 6. Download Excel and confirm the Summary and Expense Details sheets contain matching data.
 7. Change report parameters and confirm the downloaded filename and contents match the period.
 8. Sign out and confirm `/reports` and `/reports/pdf` or `/reports/excel` redirect to login.
+
+## Savings goal summary rule
+
+The dashboard savings summary uses only active goals where `saved_amount < target_amount`.
+Its active count, saved total, target total and overall progress percentage therefore use
+the same goal set. Completed goals remain available in the savings-goals page and recent
+goal list, but do not increase active totals or double-count completed savings.

@@ -163,11 +163,11 @@
         <% } else { %>
           <div class="budget-overview-grid">
             <div><span>Active goals</span><strong><%= savingsSummary.activeCount() %></strong></div>
-            <div><span>Total saved</span><strong>&#8377;<%= savingsSummary.savedAmount().setScale(2).toPlainString() %></strong></div>
-            <div><span>Total target</span><strong>&#8377;<%= savingsSummary.targetAmount().setScale(2).toPlainString() %></strong></div>
+            <div><span>Saved on active goals</span><strong>&#8377;<%= savingsSummary.savedAmount().setScale(2).toPlainString() %></strong></div>
+            <div><span>Active goals target</span><strong>&#8377;<%= savingsSummary.targetAmount().setScale(2).toPlainString() %></strong></div>
           </div>
           <div class="progress-heading">
-            <strong class="normal">OVERALL PROGRESS</strong>
+            <strong class="normal">ACTIVE GOALS PROGRESS</strong>
             <span><%= savingsSummary.overallProgress().setScale(2).toPlainString() %>%</span>
           </div>
           <div class="progress-track">

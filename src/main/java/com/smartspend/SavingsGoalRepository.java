@@ -134,10 +134,14 @@ public final class SavingsGoalRepository {
     }
 
     public SavingsSummary getSummary(long userId) throws SQLException {
-        String sql = "SELECT COALESCE(SUM(CASE WHEN saved_amount < target_amount THEN 1 ELSE 0 END), 0) AS active_count, "
+        // Dashboard savings totals include only active goals (saved_amount < target_amount).
+        // Completed goals remain visible in the goal list but are excluded here so they
+        // do not inflate active counts or overall progress.
+        String sql = "SELECT COUNT(*) AS active_count, "
                 + "COALESCE(SUM(saved_amount), 0) AS total_saved, "
                 + "COALESCE(SUM(target_amount), 0) AS total_target "
-                + "FROM savings_goals WHERE user_id = ?";
+                + "FROM savings_goals "
+                + "WHERE user_id = ? AND saved_amount < target_amount";
         BigDecimal saved = BigDecimal.ZERO;
         BigDecimal target = BigDecimal.ZERO;
         int activeCount = 0;
